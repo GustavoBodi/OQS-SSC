@@ -63,3 +63,11 @@ RUN sed -i "s/\[default_sect\]/\[default_sect\]\nactivate = 1\n\[oqsprovider_sec
 ENV OPENSSL_CONF=$BUILD_DIR/ssl/openssl.cnf
 ENV OPENSSL_MODULES=$BUILD_DIR/lib
 RUN $BUILD_DIR/bin/openssl list -providers -verbose -provider oqsprovider
+
+WORKDIR /home/labsec/
+
+RUN mkdir certificate_build
+
+COPY . ./certificate_build
+
+WORKDIR /home/labsec/certificate_build
