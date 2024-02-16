@@ -64,15 +64,17 @@ ENV OPENSSL_CONF=$BUILD_DIR/ssl/openssl.cnf
 ENV OPENSSL_MODULES=$BUILD_DIR/lib
 RUN $BUILD_DIR/bin/openssl list -providers -verbose -provider oqsprovider
 
-# Installing libcryptosec
-
-
-
 WORKDIR /home/labsec/
 
 RUN mkdir certificate_build
 
 COPY . ./certificate_build
 
-WORKDIR /home/labsec/certificate_build
+WORKDIR /home/labsec/certificate_build/build
+
+RUN cmake ..
+
+RUN make -j12
+
+RUN ./oqs
 

@@ -1,26 +1,23 @@
-IDIR =./include
-SDIR=./src
-CC=gcc
-CFLAGS=-I$(IDIR)
+.PHONY: docs
 
-ODIR=obj
+all:
+	mkdir -p build/ && \
+	cd build && \
+	cmake ../ && \
+	make -j12 && \
+	./oqs
 
-LIBS=-lm
+run:
+	cd build && \
+	make -j12 && \
+	./oqs
 
-DEPS = hellomake.h
-DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
-
-_OBJ = hellomake.o hellofunc.o 
-OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
-
-
-$(ODIR)/%.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
-
-hellomake: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
-
-.PHONY: clean
+test:
+	cd build && \
+	cmake ../ && \
+	make -j12 && \
+	./tests-main
 
 clean:
-	rm -f $(ODIR)/*.o *~ core $(INCDIR)/*~ 
+	rm -rf ./build/*
+	rm -rf ./docs/_build/*
