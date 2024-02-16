@@ -42,6 +42,7 @@ int main () {
 		}
 
 		X509* cert = X509_new();
+
 		X509_set_pubkey(cert, key);
 		X509_set_version(cert, 2);
 		ASN1_INTEGER_set(X509_get_serialNumber(cert), 0);
@@ -50,18 +51,41 @@ int main () {
 
 		X509_NAME *issuer = X509_get_subject_name(cert);
 
-		X509_NAME_add_entry_by_txt(issuer, "C", MBSTRING_ASC, reinterpret_cast<const unsigned char*>( "BR" ), (int)-1, (int)-1, (int)0);
-		X509_NAME_add_entry_by_txt(issuer, "S", MBSTRING_ASC, reinterpret_cast<const unsigned char*>("SC"), -1, -1, 0);
-		X509_NAME_add_entry_by_txt(issuer, "L", MBSTRING_ASC, reinterpret_cast<const unsigned char*>("Florianopolis"), -1, -1, 0);
-		X509_NAME_add_entry_by_txt(issuer, "O", MBSTRING_ASC, reinterpret_cast<const unsigned char*>("UFSC"), -1, -1, 0);
-		X509_NAME_add_entry_by_txt(issuer, "OU", MBSTRING_ASC, reinterpret_cast<const unsigned char*>("LabSEC"), -1, -1, 0);
-		X509_NAME_add_entry_by_txt(issuer, "CN", MBSTRING_ASC, reinterpret_cast<const unsigned char*>("OpenSSL Dilithium2"), -1, -1, 0);
+		if (! X509_NAME_add_entry_by_txt(issuer, "C", MBSTRING_ASC, reinterpret_cast<const unsigned char*>("BR"), -1, -1, 0)) {
+				std::cout << "Problem on country name" << std::endl;
+				std::cout << ERR_error_string(ERR_get_error(), NULL) << std::endl;
+				return 1;
+		}
+		if (! X509_NAME_add_entry_by_txt(issuer, "ST", MBSTRING_ASC, reinterpret_cast<const unsigned char*>("SC"), -1, -1, 0)) {
+				std::cout << "Problem on state name" << std::endl;
+				std::cout << ERR_error_string(ERR_get_error(), NULL) << std::endl;
+				return 1;
+		}
+		if (! X509_NAME_add_entry_by_txt(issuer, "L", MBSTRING_ASC, reinterpret_cast<const unsigned char*>("Florianopolis"), -1, -1, 0)) {
+				std::cout << "Problem on city name" << std::endl;
+				std::cout << ERR_error_string(ERR_get_error(), NULL) << std::endl;
+				return 1;
+		}
+		if (! X509_NAME_add_entry_by_txt(issuer, "O", MBSTRING_ASC, reinterpret_cast<const unsigned char*>("UFSC"), -1, -1, 0)) {
+				std::cout << "Problem on organization name" << std::endl;
+				std::cout << ERR_error_string(ERR_get_error(), NULL) << std::endl;
+				return 1;
+		}
+		if (! X509_NAME_add_entry_by_txt(issuer, "OU", MBSTRING_ASC, reinterpret_cast<const unsigned char*>("LabSEC"), -1, -1, 0)) {
+				std::cout << "Problem on organization unit name" << std::endl;
+				std::cout << ERR_error_string(ERR_get_error(), NULL) << std::endl;
+				return 1;
+		}
+		if (! X509_NAME_add_entry_by_txt(issuer, "CN", MBSTRING_ASC, reinterpret_cast<const unsigned char*>("OpenSSL Dilithium2"), -1, -1, 0)) {
+				std::cout << "Problem on CN name" << std::endl;
+				std::cout << ERR_error_string(ERR_get_error(), NULL) << std::endl;
+				return 1;
+		}
 
 		X509_set_issuer_name(cert, issuer);
 		X509_set_subject_name(cert, issuer);
 
-		rc = X509_sign(cert, key, EVP_sha256());
-		if (!rc) {
+		if (! X509_sign(cert, key, EVP_sha1())) {
 			std::cout << "Failed on signing signed" << std::endl;
 			std::cout << ERR_error_string(ERR_get_error(), NULL) << std::endl;
 			exit(1);
