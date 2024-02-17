@@ -85,7 +85,7 @@ int main () {
 		X509_set_issuer_name(cert, issuer);
 		X509_set_subject_name(cert, issuer);
 
-		if (! X509_sign(cert, key, EVP_sha1())) {
+		if (! X509_sign(cert, key, NULL)) {
 			std::cout << "Failed on signing signed" << std::endl;
 			std::cout << ERR_error_string(ERR_get_error(), NULL) << std::endl;
 			exit(1);
